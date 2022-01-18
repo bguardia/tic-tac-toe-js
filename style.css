@@ -92,21 +92,46 @@ body {
 .tictactoe__input-container > input {
 	width: 100%;
 	font-size: 24px;
+	border-radius: 8px;
 }
 
-.tictactoe__radial-container {
+
+.tictactoe__tab-group {
+	margin-top: 4px;
 	display: flex;
 	font-size: 18px;
 }
 
-.tictactoe__radial-container > div {
+.tab-group__tab:first-child {
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+	border-left: solid 1px black;
+}
+
+.tab-group__tab:last-child {
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-right: solid 1px black;
+}
+
+.tab-group__tab {
 	display: flex;
 	flex-grow: 1;
 	justify-content: center;
+	background: white;
+	color: black;
+	cursor: pointer;
+	border-top: solid 1px black;
+	border-bottom: solid 1px black;
 }
 
-.tictactoe__radial-container > div > * {
-	display: inline-block;
+.tab-group__tab:hover {
+	box-shadow: 0 0 4px 0 rgba(0,0,0,0.5);
+}
+
+.tab-group__tab--selected {
+	background: black;
+	color: white;
 }
 
 /* BOARD STYLES */

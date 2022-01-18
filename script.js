@@ -341,28 +341,19 @@ var ticTacToe = (function() {
 				inputEl.setAttribute("placeholder", `Player ${i}`);
 				inputEl.id = `input__player-${i}-name`;
 
-				let radialGroupContainer = document.createElement("div");
-				radialGroupContainer.className = "tictactoe__radial-container";
+				let tabGroupContainer = document.createElement("div");
+				tabGroupContainer.className = "tictactoe__tab-group";
 				["player", "computer"].forEach((txt) => {
-					let radialContainer = document.createElement("div");
-					let radialEl = document.createElement("input");
-					radialEl.setAttribute("type", "radio");
-					radialEl.id = `player-${i}-type-${txt}`;
-					radialEl.name = `player-${i}-type`;
-					radialEl.setAttribute("value", txt);
-					if(txt == "player"){
-						radialEl.setAttribute("checked", true);
-					}
-					let radialLabel = document.createElement("label");
-					radialLabel.setAttribute("for", radialEl);
-					radialLabel.innerHTML = txt.charAt(0).toUpperCase() + txt.slice(1);
-					radialContainer.appendChild(radialEl);
-					radialContainer.appendChild(radialLabel);
-					radialGroupContainer.appendChild(radialContainer);
+					let checked = txt == "player" ? true : false;
+					let tabEl = createTab(`player-${i}-type`, txt, checked);
+					let textEl = document.createElement("p");
+					textEl.innerHTML = txt.charAt(0).toUpperCase() + txt.slice(1);
+					tabEl.appendChild(textEl);
+					tabGroupContainer.appendChild(tabEl);
 				});
           			
 				inputContainerEl.appendChild(inputEl);
-				inputContainerEl.appendChild(radialGroupContainer);
+				inputContainerEl.appendChild(tabGroupContainer);
 				playerFormContainer.appendChild(inputContainerEl);
 			}
 
@@ -376,18 +367,13 @@ var ticTacToe = (function() {
 				let formInputs = Array.from(playerFormContainer.querySelectorAll("[type='text']"));
 				console.log(formInputs);
 				let playerNames = formInputs.map(x => x.value);
-				let radialInputs = Array.from(playerFormContainer.querySelectorAll("[type='radio']"));
-				console.log(radialInputs);
+				let tabInputs = Array.from(playerFormContainer.querySelectorAll(".tictactoe__tab-group [data-checked='true']"));
 				let playerTypes = [];
-				radialInputs.forEach((el) => {
-					if(el.checked){
-						if(el.value == "player"){
-							playerTypes.push(false);
-						}else if(el.value == "computer"){
-							playerTypes.push(true);
-						}
-					}
+				tabInputs.forEach((el) => {
+					let val = el.getAttribute("data-value");
+					playerTypes.push(!!(val == "computer"));
 				});
+
 				resetPlayers(playerNames, playerTypes);
 				newGame();
 			});
@@ -450,6 +436,35 @@ var ticTacToe = (function() {
 				console.log("Adding ellipses");
 				display.appendChild(renderWaitingEllipses());
 			};
+		};
+
+		var createTab = function(name, value, checked = false){
+			let tabEl = document.createElement("div");
+			tabEl.className = "tab-group__tab";
+			tabEl.setAttribute("data-tab-group", name);
+			tabEl.setAttribute("data-value", value);
+			tabEl.setAttribute("data-checked", checked);
+			if(checked){
+				tabEl.classList.add("tab-group__tab--selected");
+			}
+			tabEl.addEventListener("click", toggleTabs);
+			return tabEl;
+		};
+
+		var toggleTabs = function() {
+			console.log("called toggleTabs");
+			let checkedStatus = this.getAttribute("data-checked") == "true"; //convert to Boolean
+			console.log(`checkedStatus is: ${checkedStatus}`);
+			if(!checkedStatus){//Do nothing if tab is already checked
+				let tabGroup = this.getAttribute("data-tab-group");
+				let tabEls = Array.from(document.querySelectorAll(`[data-tab-group='${tabGroup}']`));
+				tabEls.forEach(tab => {
+					tab.setAttribute("data-checked", false);
+					tab.classList.remove("tab-group__tab--selected");
+				});
+				this.setAttribute("data-checked", true);
+				this.classList.add("tab-group__tab--selected");
+			}
 		};
 
 		var renderWaitingEllipses = function(){//Returns a container containing animated ellipses
